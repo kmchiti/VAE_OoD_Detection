@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```
 
 ## Model Details
-* Developed by Kamran Chitsaz and Alireza Razaghi for the IFT6390 first project.
+* Developed by Kamran and Alireza for the IFT6390 first project.
 * Model has been developed on 2021-03-10
 * Using Variational Autoencoder to identify if a sample is coming from a similar distribution as the training dataset or not
 
