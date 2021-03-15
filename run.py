@@ -5,9 +5,6 @@ import sys
 import os
 import subprocess
 
-################################
-# Complete the functions below #
-################################
 
 # Download/create the dataset
 def fetch():
@@ -88,10 +85,6 @@ def build_paper():
   subprocess.call('pdflatex main.tex')
   os.system('start main.pdf')
 
-
-###############################
-# No need to modify past here #
-###############################
 
 supported_functions = {'fetch': fetch,
                        'train': train,
