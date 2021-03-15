@@ -27,3 +27,10 @@ pip install -r requirements.txt
 * Particularly intended for investigating if a picture is of a number or not
 * Not suitable for classifying other types of images such as animals or objects
 * Should not be used for essential topics such as navigation in smart cars
+
+## Reproducibility
+We have provide a python script named run.py taking the following arguments:
+* python run.py fetch: Download the dataset 
+* python run.py train: Train the model on the dataset
+* python run.py evaluate: Compute the evaluation metrics and figures needed in the model card and project report which you can find in latex folder
+* python run.py build_paper: Compile model card and report PDF documents based on the evaluation metrics obtained.
