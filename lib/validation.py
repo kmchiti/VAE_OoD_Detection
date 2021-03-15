@@ -9,18 +9,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense,Flatten,Reshape
 from tensorflow.keras.optimizers import SGD
 
-def nLL(x, recon, mu, logvar, z):
-  sigma = np.exp(0.5*logvar)
-  b = x.shape[0]
-
-  cross_entropy = keras.losses.binary_crossentropy(x, recon)
-  log_p_x_z = -np.sum(cross_entropy,(1,2))     
-  log_p_z = -np.sum(z**2/2+np.log(2*np.pi)/2,1)
-  z_eps = (z - mu)/sigma
-  log_q_z_x = -np.sum(z_eps**2/2 + np.log(2*np.pi)/2 + logvar/2, 1)        
-  weights = log_p_x_z+log_p_z-log_q_z_x
-        
-  return weights
   
 def nLL_mc(x, vae, M):
   mu, logvar, _ = vae.encoder.predict(x)
@@ -43,9 +31,7 @@ def nLL_mc(x, vae, M):
   
 
 def plot_hist_s (x, vae):
-  #mu, logvar, z= vae.encoder.predict(x)
-  #recon = vae.decoder.predict(z)
-  #weights = nLL(x, recon, mu, logvar, z)
+
   weights = nLL_mc(x, vae, 50)
   
   plt.figure(figsize=(12, 10))
@@ -57,13 +43,7 @@ def plot_hist_s (x, vae):
 
   
 def plot_hist (x_in, x_out, vae):
-  #mu, logvar, z= vae.encoder.predict(x_in)
-  #recon = vae.decoder.predict(z)
-  #mu_f, logvar_f, z_f= vae.encoder.predict(x_out)
-  #recon_f = vae.decoder.predict(z_f)
-  
-  #weights = nLL(x_in, recon, mu, logvar, z)
-  #weights_f = nLL(x_out, recon_f, mu_f, logvar_f, z_f)
+
   weights = nLL_mc(x_in, vae, 50)
   weights_f = nLL_mc(x_out, vae, 50)
 
@@ -72,19 +52,6 @@ def plot_hist (x_in, x_out, vae):
   plt.hist(weights, alpha=0.5, label="In-distrubution")
   plt.legend()
   plt.xlabel("log likelihood")
-  
-  mean = np.mean(weights)
-  cov = np.sqrt(np.cov(weights))
-  x = np.linspace(weights.min(0),weights.max(),1000)
-  p = scipy.stats.norm(mean, cov).pdf(x)
-  mean_f = np.mean(weights_f)
-  cov_f = np.sqrt(np.cov(weights_f))
-  x_f = np.linspace(weights_f.min(0),weights_f.max(),1000)
-  p_f = scipy.stats.norm(mean_f, cov_f).pdf(x_f)
-  plt.plot(x_f,p_f,label="OoD")
-  plt.plot(x,p,label="In-distribution")
-  
-  
   
 
   if not (os.path.isdir('figures')):
@@ -110,20 +77,14 @@ def plot_label_clusters(vae, data, labels):
   plt.close()
   
 def plot_norm(x_in, x_out,vae):
-  #mu, logvar, z= vae.encoder.predict(x_in)
-  #recon = vae.decoder.predict(z)
-  #weights = nLL(x_in, recon, mu, logvar, z)
+
   weights = nLL_mc(x_in, vae, 50)
+  weights_f = nLL_mc(x_out, vae, 50)
 
   mean = np.mean(weights)
   cov = np.sqrt(np.cov(weights))
   x = np.linspace(weights.min(0),weights.max(),1000)
   p = scipy.stats.norm(mean, cov).pdf(x)
-
-  #mu_f, logvar_f, z_f= vae.encoder.predict(x_out)
-  #recon_f = vae.decoder.predict(z_f)
-  #weights_f = nLL(x_out, recon_f, mu_f, logvar_f, z_f)
-  weights_f = nLL_mc(x_out, vae, 50)
 
   mean_f = np.mean(weights_f)
   cov_f = np.sqrt(np.cov(weights_f))
@@ -143,9 +104,6 @@ def plot_norm(x_in, x_out,vae):
   
 def predict(x,vae,t):
   out = np.zeros(x.shape[0])
-  #mu, logvar, z= vae.encoder.predict(x)
-  #recon = vae.decoder.predict(z)
-  #weights = nLL(x, recon, mu, logvar, z)
   weights = nLL_mc(x, vae, 50)
   out = weights >-500
   return out.astype(int)
